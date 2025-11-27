@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en" data-app="receptive-layers-node">
+<head>
+  <meta charset="UTF-8" />
+  <title>Receptive Layers • It’s Safe to Begin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A gentle broadcast to hidden builders, healers, and stewards: it is becoming safer to step forward and help build a regenerative future." />
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-soft: #050816ee;
+      --bg-card: #080c1a;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.25);
+      --accent-2: #a855f7;
+      --accent-2-soft: rgba(168, 85, 247, 0.25);
+      --text-main: #f9fafb;
+      --text-soft: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+      --radius-lg: 18px;
+      --radius-xl: 26px;
+      --shadow-soft: 0 18px 55px rgba(15, 23, 42, 0.85);
+      --transition-fast: 220ms ease-out;
+      --transition-med: 420ms ease;
+      --font-body: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                   "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      overflow-x: hidden;
+      overscroll-behavior: none;
+    }
+
+    /* Starfield-ish backdrop */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(148, 163, 184, 0.28) 0, transparent 45%),
+        radial-gradient(circle at 80% 10%, rgba(56, 189, 248, 0.15) 0, transparent 55%),
+        radial-gradient(circle at 30% 90%, rgba(168, 85, 247, 0.25) 0, transparent 50%);
+      opacity: 0.85;
+      mix-blend-mode: screen;
+      z-index: -1;
+    }
+
+    .grain {
+      position: fixed;
+      inset: -50px;
+      pointer-events: none;
+      opacity: 0.15;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      z-index: -1;
+      animation: grainMove 18s linear infinite;
+    }
+
+    @keyframes grainMove {
+      0% { transform: translate3d(0, 0, 0); }
+      50% { transform: translate3d(-10px, -12px, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1120px;
+      margin: 18px auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+      border-radius: 26px;
+      padding: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px) saturate(1.4);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      border: 1px solid transparent;
+      background:
+        linear-gradient(135deg, rgba(56, 189, 248, 0.0), rgba(168, 85, 247, 0.35)),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.35), transparent 60%);
+      background-clip: padding-box, border-box;
+      z-index: -2;
+      opacity: 0.7;
+    }
+
+    .card-inner {
+      border-radius: 20px;
+      position: relative;
+      z-index: 1;
+      min-height: 520px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.9fr);
+      gap: 22px;
+    }
+
+    @media (max-width: 880px) {
+      .card-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .tagline-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    .tag-pill {
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background: rgba(15, 23, 42, 0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .spark {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.95);
+    }
+
+    h1 {
+      font-size: clamp(2.45rem, 2.1rem + 1.1vw, 3rem);
+      line-height: 1.03;
+      letter-spacing: 0.01em;
+      margin-bottom: 10px;
+    }
+
+    .title-gradient {
+      background: linear-gradient(120deg, #e5e7eb, #bae6fd, #ddd6fe);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      font-size: 0.98rem;
+      color: var(--text-soft);
+      max-width: 34rem;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .whisper {
+      font-size: 0.92rem;
+      color: var(--text-soft);
+      opacity: 0.75;
+      margin-bottom: 10px;
+    }
+
+    .splash-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 9px 16px;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      background: none;
+      color: var(--text-main);
+      transition: background var(--transition-fast), transform var(--transition-fast),
+                  box-shadow var(--transition-fast), border-color var(--transition-fast),
+                  color var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top left, #38bdf8, #2563eb);
+      box-shadow:
+        0 0 0 1px rgba(56, 189, 248, 0.4),
+        0 16px 40px rgba(56, 189, 248, 0.45);
+      font-weight: 550;
+      color: #0b1120;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0 1px rgba(191, 219, 254, 0.65),
+        0 18px 55px rgba(59, 130, 246, 0.75);
+    }
+
+    .btn-ghost {
+      border-color: rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.75);
+      color: var(--text-soft);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(209, 213, 219, 0.75);
+      color: #e5e7eb;
+    }
+
+    .btn-pill-soft {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(55, 65, 81, 0.95);
+    }
+
+    .btn-pill-soft[data-active="true"] {
+      background: linear-gradient(130deg, rgba(56, 189, 248, 0.18), rgba(129, 140, 248, 0.25));
+      border-color: rgba(191, 219, 254, 0.85);
+      color: #e5e7eb;
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.4);
+    }
+
+    .btn-icon {
+      font-size: 1.05rem;
+      transition: transform var(--transition-fast);
+    }
+
+    .btn-primary:hover .btn-icon {
+      transform: translateX(2px);
+    }
+
+    .microcopy {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+
+    /* Splash + main state transitions */
+    .view {
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity var(--transition-med), transform var(--transition-med);
+    }
+
+    .view.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .view.hidden {
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+    }
+
+    .view-main {
+      margin-top: 18px;
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+      padding-top: 18px;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    .layers-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr);
+      gap: 10px;
+    }
+
+    .layer-card {
+      border-radius: 18px;
+      padding: 12px 13px;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), #020617);
+      border: 1px solid rgba(31,41,55,0.9);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.85);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .layer-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.1), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.14), transparent 60%);
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    .layer-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .layer-name {
+      font-weight: 600;
+      font-size: 0.98rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .layer-chip {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #e5e7eb;
+      background: rgba(17, 24, 39, 0.8);
+    }
+
+    .layer-body {
+      font-size: 0.86rem;
+      color: var(--text-soft);
+      line-height: 1.45;
+    }
+
+    .layer-points {
+      margin-top: 6px;
+      list-style: none;
+      font-size: 0.84rem;
+      color: #9ca3af;
+    }
+
+    .layer-points li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+
+    .layer-points li span.dot {
+      margin-top: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.9);
+      flex-shrink: 0;
+    }
+
+    /* Right side: identity + choices */
+    .side-panel {
+      border-radius: 18px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.95), #020617);
+      padding: 13px 13px 12px;
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .side-panel::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.18), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.12), transparent 60%);
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    .side-title {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+
+    .side-callout {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      line-height: 1.45;
+    }
+
+    .node-type-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+
+    .node-type-row .btn {
+      font-size: 0.8rem;
+      padding: 5px 10px;
+    }
+
+    .hint {
+      font-size: 0.76rem;
+      color: #9ca3af;
+    }
+
+    .actions-box {
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(55, 65, 81, 0.95);
+      padding: 9px 9px 8px;
+      font-size: 0.83rem;
+      color: var(--text-soft);
+      line-height: 1.45;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .actions-box::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .actions-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .actions-box::-webkit-scrollbar-thumb {
+      background: rgba(75, 85, 99, 0.9);
+      border-radius: 999px;
+    }
+
+    .actions-box h3 {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: #e5e7eb;
+    }
+
+    .actions-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .actions-list li {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .actions-list li span.badge {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(107, 114, 128, 0.9);
+      color: #d1d5db;
+      background: rgba(17, 24, 39, 0.95);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .actions-list li p {
+      margin-top: 1px;
+    }
+
+    .breadcrumb-box {
+      font-size: 0.78rem;
+      color: #9ca3af;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px dashed rgba(75, 85, 99, 0.85);
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .crumb-pill {
+      border-radius: 999px;
+      padding: 2px 8px;
+      background: rgba(31, 41, 55, 0.95);
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      white-space: nowrap;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: rgba(22, 163, 74, 0.18);
+      border: 1px solid rgba(74, 222, 128, 0.75);
+      color: #bbf7d0;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.9);
+    }
+
+    .status-note {
+      font-size: 0.72rem;
+      color: #9ca3af;
+      text-align: right;
+    }
+
+    .footnote-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+      font-size: 0.72rem;
+      color: #6b7280;
+    }
+
+    .footnote-row code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+        "Courier New", monospace;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: #e5e7eb;
+    }
+
+    /* Tiny fade "page turn" animation when updating actions */
+    .fade-swap {
+      animation: fadeSwap 260ms ease-out;
+    }
+
+    @keyframes fadeSwap {
+      0% { opacity: 0; transform: translateY(4px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 640px) {
+      .app-shell {
+        margin: 4px auto 10px;
+        padding: 10px;
+      }
+      .card {
+        padding: 12px;
+      }
+      .card-inner {
+        min-height: 0;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .subtitle {
+        font-size: 0.9rem;
+      }
+      .side-panel {
+        min-height: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="app-shell">
+  <main class="card" aria-label="Receptive layers broadcast">
+    <div class="card-inner">
+      <!-- LEFT: splash + layer overview -->
+      <section aria-label="Intro and layers">
+        <!-- Splash -->
+        <div id="splash-view" class="view visible" aria-live="polite">
+          <div class="tagline-bar">
+            <span class="tag-pill">
+              <span class="spark"></span>
+              <span>Signal • Receptive Node</span>
+            </span>
+            <span>Broadcast: &ldquo;It is becoming safer to show up.&rdquo;</span>
+          </div>
+
+          <h1 class="title-gradient">
+            To the ones who hid to survive:<br />it&rsquo;s safe to begin again.
+          </h1>
+
+          <p class="subtitle">
+            This page is a gentle lighthouse for quiet geniuses, tired healers, and scattered
+            builders. No loyalty oaths, no purity tests. Just a clear intention:
+            <strong>reduce harm</strong>, <strong>increase care</strong>, and
+            <strong>build a future that treats you as essential infrastructure</strong>.
+          </p>
+
+          <p class="whisper">
+            If you had to dim your light to stay safe, this is a small, practical
+            invitation to turn the dimmer one notch up on your terms.
+          </p>
+
+          <div class="splash-actions">
+            <button class="btn btn-primary" id="enter-btn" type="button">
+              I&rsquo;m listening
+              <span class="btn-icon">⮞</span>
+            </button>
+            <button class="btn btn-ghost" id="quiet-btn" type="button">
+              I&rsquo;m here, but I move quietly.
+            </button>
+          </div>
+          <p class="microcopy">
+            No tracking, no logins, no hidden asks. Your choices stay in this browser only.
+          </p>
+        </div>
+
+        <!-- Main layers overview -->
+        <div id="main-view" class="view view-main hidden" aria-hidden="true">
+          <p class="section-title">Core Receptive Layers</p>
+          <p class="subtitle" style="margin-bottom:10px;">
+            Think of this as a simple stack you can remix anywhere you show up: personal life,
+            online spaces, local projects, or planetary-scale experiments. Each layer makes the
+            next one safer and more powerful.
+          </p>
+
+          <div class="layers-grid" aria-label="Receptive layers">
+            <!-- Layer 1 -->
+            <article class="layer-card">
+              <header class="layer-heading">
+                <div class="layer-name">
+                  <span>1. Inner Layer: Psychological Safety</span>
+                </div>
+                <span class="layer-chip">No Punishment for Showing Up</span>
+              </header>
+              <div class="layer-body">
+                We start by protecting the nervous system. A receptive node is a place where
+                <strong>people won&rsquo;t be mocked, punished, or exiled for saying the quiet part out loud</strong>.
+                That includes saying &ldquo;no&rdquo;, asking &ldquo;why?&rdquo;, and admitting &ldquo;I&rsquo;m not ok&rdquo;.
+                <ul class="layer-points">
+                  <li><span class="dot"></span><span>Normalize &ldquo;I might be wrong, but here&rsquo;s what I see.&rdquo;</span></li>
+                  <li><span class="dot"></span><span>Leaders go first in admitting mistakes; that sets the ceiling on honesty.</span></li>
+                  <li><span class="dot"></span><span>Replace humiliation with curiosity when something breaks.</span></li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Layer 2 -->
+            <article class="layer-card">
+              <header class="layer-heading">
+                <div class="layer-name">
+                  <span>2. Circle Layer: Mutual Aid &amp; Reciprocity</span>
+                </div>
+                <span class="layer-chip">Solidarity, Not Charity</span>
+              </header>
+              <div class="layer-body">
+                Receptive spaces run on <strong>exchange, not extraction</strong>. Mutual aid means
+                we move resources, time, and information in ways that keep dignity intact and power
+                circulating, not hoarded.
+                <ul class="layer-points">
+                  <li><span class="dot"></span><span>Everyone can be a giver and a receiver at different times.</span></li>
+                  <li><span class="dot"></span><span>We design flows so that care doesn&rsquo;t burn out the same 3 people.</span></li>
+                  <li><span class="dot"></span><span>We name and celebrate invisible work (emotional labour, translation, holding the group together).</span></li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Layer 3 -->
+            <article class="layer-card">
+              <header class="layer-heading">
+                <div class="layer-name">
+                  <span>3. Mesh Layer: Regenerative Designs</span>
+                </div>
+                <span class="layer-chip">More Life In, Not Less</span>
+              </header>
+              <div class="layer-body">
+                A receptive node doesn&rsquo;t just avoid harm, it <strong>actively restores</strong>.
+                Regenerative design asks: after we work together, is there
+                <em>more</em> health in the land, the people, and the relationships?
+                <ul class="layer-points">
+                  <li><span class="dot"></span><span>Food forests, community gardens, and shared tools instead of scarcity games.</span></li>
+                  <li><span class="dot"></span><span>Systems that cycle resources locally and reduce dependency on fragile centralized supply chains.</span></li>
+                  <li><span class="dot"></span><span>Projects that make it easier for the next person to do something kind and courageous.</span></li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Layer 4 -->
+            <article class="layer-card">
+              <header class="layer-heading">
+                <div class="layer-name">
+                  <span>4. Governance Layer: Transparent &amp; Trauma-Informed</span>
+                </div>
+                <span class="layer-chip">Nothing About Us Without Us</span>
+              </header>
+              <div class="layer-body">
+                Receptive spaces are explicit about <strong>how decisions are made</strong>.
+                We assume people are carrying visible and invisible trauma, so we
+                don&rsquo;t design processes that casually re-wound them.
+                <ul class="layer-points">
+                  <li><span class="dot"></span><span>Clear, written agreements instead of vibes-only expectations.</span></li>
+                  <li><span class="dot"></span><span>Resident / member voice in decisions that affect them; no secret deals in back rooms.</span></li>
+                  <li><span class="dot"></span><span>Rhythms for repair: when harm happens, we have a way back, not just a way out.</span></li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Layer 5 -->
+            <article class="layer-card">
+              <header class="layer-heading">
+                <div class="layer-name">
+                  <span>5. Signal Layer: Story, Art &amp; Invitations</span>
+                </div>
+                <span class="layer-chip">Broadcasting Safety</span>
+              </header>
+              <div class="layer-body">
+                People who hid for safety watch for <strong>consistency over time</strong>.
+                They notice who gets protected, who gets thrown under the bus, and who gets quietly erased.
+                So we broadcast differently.
+                <ul class="layer-points">
+                  <li><span class="dot"></span><span>We tell stories that centre care, not conquest.</span></li>
+                  <li><span class="dot"></span><span>We make explicit invitations to those who were silenced first and worst.</span></li>
+                  <li><span class="dot"></span><span>We say: &ldquo;You can enter slowly, leave anytime, and choose your level of visibility.&rdquo;</span></li>
+                </ul>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: node identity + actions -->
+      <aside class="side-panel" aria-label="Choose how you connect">
+        <header>
+          <p class="side-title">You are not late. You are right on time.</p>
+          <p class="side-callout">
+            Choose the role that fits your current capacity. This doesn&rsquo;t lock you in;
+            it simply shapes the suggestions below and stores a tiny breadcrumb in
+            <strong>your</strong> browser so the page remembers you next time.
+          </p>
+        </header>
+
+        <section aria-label="Node type selector">
+          <div class="node-type-row" id="node-buttons">
+            <button class="btn btn-pill-soft" data-node="quiet-anchor" type="button">
+              🕯️ Quiet Anchor
+            </button>
+            <button class="btn btn-pill-soft" data-node="signal-booster" type="button">
+              📡 Signal Booster
+            </button>
+            <button class="btn btn-pill-soft" data-node="systems-builder" type="button">
+              🛠️ Systems Builder
+            </button>
+            <button class="btn btn-pill-soft" data-node="healer-keeper" type="button">
+              🌿 Healer / Keeper
+            </button>
+          </div>
+          <p class="hint">
+            You can change this anytime. &ldquo;Quiet Anchor&rdquo; is for those still half-in, half-out.
+          </p>
+        </section>
+
+        <section aria-label="Suggested next steps">
+          <div class="actions-box" id="actions-box">
+            <!-- Filled by JS -->
+          </div>
+        </section>
+
+        <section aria-label="Your breadcrumbs">
+          <div style="margin-top:6px;">
+            <span class="breadcrumb-box" id="breadcrumb-box">
+              <span>Breadcrumbs:</span>
+              <!-- filled by JS -->
+            </span>
+          </div>
+          <div class="status-row">
+            <span class="status-pill">
+              <span class="status-dot"></span>
+              Harm-reduction mode: engaged
+            </span>
+            <span class="status-note">
+              This page can&rsquo;t fix the world alone.<br />
+              It can help you find the others.
+            </span>
+          </div>
+        </section>
+
+        <footer class="footnote-row">
+          <span>Local only • No server, no surveillance.</span>
+          <span>
+            <code>NODE:&nbsp;<span id="node-code">unset</span></code>
+          </span>
+        </footer>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    const STORAGE_KEY_NODE = "receptiveNodeType_v1";
+    const STORAGE_KEY_CRUMBS = "receptiveNodeBreadcrumbs_v1";
+
+    const splashView = document.getElementById("splash-view");
+    const mainView = document.getElementById("main-view");
+    const enterBtn = document.getElementById("enter-btn");
+    const quietBtn = document.getElementById("quiet-btn");
+    const nodeButtonsContainer = document.getElementById("node-buttons");
+    const actionsBox = document.getElementById("actions-box");
+    const crumbBox = document.getElementById("breadcrumb-box");
+    const nodeCodeEl = document.getElementById("node-code");
+
+    /** Simple "page turn" between splash and main */
+    function showMainView() {
+      if (!splashView || !mainView) return;
+      splashView.classList.remove("visible");
+      splashView.classList.add("hidden");
+      mainView.classList.remove("hidden");
+      mainView.classList.add("visible");
+      mainView.setAttribute("aria-hidden", "false");
+    }
+
+    /** Suggested actions per node type */
+    const ACTION_PRESETS = {
+      "quiet-anchor": {
+        title: "Suggested next steps for a Quiet Anchor 🕯️",
+        items: [
+          {
+            tag: "Daily 1%",
+            text:
+              "Identify one person in your orbit who feels like they’re barely hanging on. Once this week, send them a low-pressure note that doesn’t ask for anything back."
+          },
+          {
+            tag: "Boundary",
+            text:
+              "If you join any project, write down your non-negotiables first (sleep, health, family, no abuse). A receptive node respects those lines."
+          },
+          {
+            tag: "Signal Check",
+            text:
+              "Watch how people respond when someone disagrees. If the response is mockery or exile, treat it as a red flag and keep your deeper gifts throttled."
+          },
+          {
+            tag: "Micro-Ritual",
+            text:
+              "Create a 30-second ritual before you share ideas publicly (one breath, one stretch, one sentence: “I deserve to exist in this conversation.”)."
+          }
+        ],
+        code: "Q-ANCHOR"
+      },
+      "signal-booster": {
+        title: "Suggested next steps for a Signal Booster 📡",
+        items: [
+          {
+            tag: "Curate",
+            text:
+              "Choose three projects, people, or groups that are actually reducing harm. Make a recurring habit of quietly amplifying their work, not just their crisis posts."
+          },
+          {
+            tag: "Receipts",
+            text:
+              "When you post, show process and receipts, not just vibes. Screenshots of mutual aid delivered, trees planted, people fed — reality beats slogans."
+          },
+          {
+            tag: "Consent",
+            text:
+              "Before making anyone a symbol or hero, ask if they’re okay being visible. Some builders need cover more than they need a spotlight."
+          },
+          {
+            tag: "Slow Virality",
+            text:
+              "Design messages that nudge people toward action, not outrage. Outrage spikes; care compounds."
+          }
+        ],
+        code: "SIG-BOOST"
+      },
+      "systems-builder": {
+        title: "Suggested next steps for a Systems Builder 🛠️",
+        items: [
+          {
+            tag: "Safety First",
+            text:
+              "Bake in psychological safety and trauma-informed defaults from version 0.1: clear codes of conduct, repair paths, and explicit anti-abuse boundaries."
+          },
+          {
+            tag: "Mutual Aid",
+            text:
+              "Design funding and governance so that people closest to the problem co-own the solution (seats at the table, not just feedback forms)."
+          },
+          {
+            tag: "Regenerative",
+            text:
+              "Ask of every feature: does this reduce extraction and increase local capacity? If not, adjust the architecture before scaling."
+          },
+          {
+            tag: "Fork-Friendly",
+            text:
+              "Structure your work so others can fork, adapt, and localize without needing your permission. Receptive nodes multiply, they don’t monopolize."
+          }
+        ],
+        code: "SYS-BUILD"
+      },
+      "healer-keeper": {
+        title: "Suggested next steps for a Healer / Keeper 🌿",
+        items: [
+          {
+            tag: "Recharge",
+            text:
+              "Schedule recovery with the same seriousness as crisis response. A depleted healer becomes another person in need of rescue."
+          },
+          {
+            tag: "Healthy Distance",
+            text:
+              "Resist becoming the sole emotional landfill of any group. Build circles and peer-support structures so care is distributed, not dumped."
+          },
+          {
+            tag: "Story Care",
+            text:
+              "When someone shares their story, ask what they want from you: witness, advice, resources, or just silence and presence."
+          },
+          {
+            tag: "Embodiment",
+            text:
+              "Keep at least one practice that reconnects you to your own body (walks, stretching, breath, music). Disembodied helpers burn out faster."
+          }
+        ],
+        code: "HEAL-KEEP"
+      }
+    };
+
+    function readLocalJson(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch (err) {
+        return fallback;
+      }
+    }
+
+    function writeLocalJson(key, value) {
+      try {
+        window.localStorage.setItem(key, JSON.stringify(value));
+      } catch (err) {
+        // Ignore quota or privacy errors; page still works.
+      }
+    }
+
+    /** Render actions for a specific node type */
+    function renderActions(nodeType) {
+      const preset = ACTION_PRESETS[nodeType] || ACTION_PRESETS["quiet-anchor"];
+      if (!actionsBox) return;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "fade-swap";
+
+      const h = document.createElement("h3");
+      h.textContent = preset.title;
+      wrapper.appendChild(h);
+
+      const ul = document.createElement("ul");
+      ul.className = "actions-list";
+
+      preset.items.forEach(item => {
+        const li = document.createElement("li");
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = item.tag;
+        const p = document.createElement("p");
+        p.textContent = item.text;
+        li.appendChild(badge);
+        li.appendChild(p);
+        ul.appendChild(li);
+      });
+
+      wrapper.appendChild(ul);
+
+      actionsBox.innerHTML = "";
+      actionsBox.appendChild(wrapper);
+
+      // Update node code
+      if (nodeCodeEl) {
+        nodeCodeEl.textContent = preset.code;
+      }
+    }
+
+    /** Update which node button is active */
+    function setActiveNodeButton(nodeType) {
+      if (!nodeButtonsContainer) return;
+      [...nodeButtonsContainer.querySelectorAll(".btn")].forEach(btn => {
+        const isActive = btn.getAttribute("data-node") === nodeType;
+        btn.setAttribute("data-active", isActive ? "true" : "false");
+      });
+    }
+
+    /** Breadcrumbs: simple local history of chosen node roles */
+    function updateBreadcrumbs(newNodeType) {
+      if (!crumbBox) return;
+      const crumbs = readLocalJson(STORAGE_KEY_CRUMBS, []);
+      const nowIso = new Date().toISOString();
+      const entry = { node: newNodeType, at: nowIso };
+      const updated = [...crumbs, entry].slice(-6); // keep last 6
+
+      writeLocalJson(STORAGE_KEY_CRUMBS, updated);
+
+      // Clear existing pills (except the "Breadcrumbs:" label)
+      const existingPills = crumbBox.querySelectorAll(".crumb-pill");
+      existingPills.forEach(el => el.remove());
+
+      updated.forEach(c => {
+        const pill = document.createElement("span");
+        pill.className = "crumb-pill";
+        const label = (c.node || "unset").replace("-", " ");
+        const date = new Date(c.at);
+        const short = Number.isNaN(date.getTime())
+          ? ""
+          : `${date.getMonth() + 1}/${date.getDate()}`;
+        pill.textContent = label + (short ? ` • ${short}` : "");
+        crumbBox.appendChild(pill);
+      });
+    }
+
+    /** Main selection handler */
+    function setNodeType(nodeType) {
+      writeLocalJson(STORAGE_KEY_NODE, nodeType);
+      setActiveNodeButton(nodeType);
+      renderActions(nodeType);
+      updateBreadcrumbs(nodeType);
+    }
+
+    /** Setup event listeners */
+    if (enterBtn) {
+      enterBtn.addEventListener("click", () => {
+        showMainView();
+      });
+    }
+
+    if (quietBtn) {
+      quietBtn.addEventListener("click", () => {
+        showMainView();
+        setNodeType("quiet-anchor");
+      });
+    }
+
+    if (nodeButtonsContainer) {
+      nodeButtonsContainer.addEventListener("click", ev => {
+        const target = ev.target.closest("[data-node]");
+        if (!target) return;
+        const nodeType = target.getAttribute("data-node");
+        if (!nodeType) return;
+        setNodeType(nodeType);
+      });
+    }
+
+    /** Initial hydration from localStorage */
+    (function hydrateFromStorage() {
+      const storedNode = readLocalJson(STORAGE_KEY_NODE, null);
+      if (storedNode && ACTION_PRESETS[storedNode]) {
+        // Assume returning visitor; skip splash and go straight to main
+        showMainView();
+        setNodeType(storedNode);
+      } else {
+        // First visit; default preview
+        renderActions("quiet-anchor");
+        setActiveNodeButton("quiet-anchor");
+        updateBreadcrumbs("quiet-anchor");
+      }
+    })();
+  })();
+</script>
+</body>
+</html>
