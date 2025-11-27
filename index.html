@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en" data-app="fishing-streamers-worldbuilding">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fishing Streamers • Leave the Game, Build the World</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="An invitation for streamers to transition from playing inside other people's worlds to co-creating new ones together." />
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-soft: #020617f2;
+      --card: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --accent-2: #a855f7;
+      --accent-2-soft: rgba(168, 85, 247, 0.16);
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-soft: 0 20px 60px rgba(15, 23, 42, 0.9);
+      --transition-fast: 220ms ease-out;
+      --transition-med: 360ms ease;
+      --font-body: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                   "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; width: 100%; }
+
+    body {
+      font-family: var(--font-body);
+      background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(148, 163, 184, 0.3) 0, transparent 50%),
+        radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.18) 0, transparent 55%),
+        radial-gradient(circle at 20% 90%, rgba(168, 85, 247, 0.22) 0, transparent 50%);
+      mix-blend-mode: screen;
+      opacity: 0.85;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    .grain {
+      position: fixed;
+      inset: -40px;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      z-index: -1;
+      animation: grainMove 18s linear infinite;
+    }
+
+    @keyframes grainMove {
+      0% { transform: translate3d(0, 0, 0); }
+      50% { transform: translate3d(-12px, -10px, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+
+    .shell {
+      max-width: 1100px;
+      margin: 20px auto 40px;
+      padding: 16px;
+    }
+
+    .card {
+      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      backdrop-filter: blur(18px) saturate(1.4);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background:
+        linear-gradient(135deg, rgba(56, 189, 248, 0.0), rgba(168, 85, 247, 0.4)),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.4), transparent 60%);
+      background-clip: padding-box, border-box;
+      z-index: -2;
+      opacity: 0.7;
+    }
+
+    .inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.9fr);
+      gap: 22px;
+      min-height: 520px;
+    }
+
+    @media (max-width: 880px) {
+      .inner {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 0;
+      }
+    }
+
+    .tagline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .spark {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.9);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 2.1rem + 1vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+      margin-bottom: 8px;
+    }
+
+    .title-gradient {
+      background: linear-gradient(120deg, #f9fafb, #bae6fd, #ddd6fe);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      font-size: 0.98rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+      max-width: 34rem;
+      margin-bottom: 10px;
+    }
+
+    .whisper {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      opacity: 0.78;
+      margin-bottom: 12px;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 9px 16px;
+      font-size: 0.94rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      background: none;
+      color: var(--text-main);
+      transition: background var(--transition-fast), transform var(--transition-fast),
+                  box-shadow var(--transition-fast), border-color var(--transition-fast),
+                  color var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top left, #38bdf8, #2563eb);
+      color: #0b1120;
+      font-weight: 550;
+      box-shadow:
+        0 0 0 1px rgba(56, 189, 248, 0.45),
+        0 16px 40px rgba(37, 99, 235, 0.65);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0 1px rgba(191, 219, 254, 0.7),
+        0 18px 55px rgba(59, 130, 246, 0.85);
+    }
+
+    .btn-ghost {
+      border-color: rgba(148, 163, 184, 0.8);
+      background: rgba(15, 23, 42, 0.92);
+      color: var(--text-soft);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 1);
+      color: #e5e7eb;
+    }
+
+    .btn-pill {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-soft);
+    }
+
+    .btn-pill[data-active="true"] {
+      background: linear-gradient(130deg, rgba(56, 189, 248, 0.24), rgba(129, 140, 248, 0.3));
+      border-color: rgba(191, 219, 254, 0.9);
+      color: #f9fafb;
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.55);
+    }
+
+    .btn-icon { font-size: 1.05rem; transition: transform var(--transition-fast); }
+    .btn-primary:hover .btn-icon { transform: translateX(2px); }
+
+    .microcopy {
+      font-size: 0.78rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .view {
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity var(--transition-med), transform var(--transition-med);
+    }
+
+    .view.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .view.hidden {
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+    }
+
+    .section-label {
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .layer-card {
+      position: relative;
+      border-radius: var(--radius-lg);
+      padding: 12px 13px 11px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), #020617);
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+    }
+
+    .layer-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.18), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.18), transparent 60%);
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    .layer-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+
+    .layer-title {
+      font-size: 0.96rem;
+      font-weight: 600;
+    }
+
+    .tag-chip {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      background: rgba(15, 23, 42, 0.96);
+      color: #e5e7eb;
+    }
+
+    .layer-body {
+      font-size: 0.86rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    .bullets {
+      list-style: none;
+      margin-top: 5px;
+      font-size: 0.84rem;
+      color: #9ca3af;
+    }
+
+    .bullets li {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+
+    .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      margin-top: 5px;
+      background: rgba(148, 163, 184, 0.9);
+      flex-shrink: 0;
+    }
+
+    .side {
+      border-radius: var(--radius-lg);
+      padding: 13px 13px 11px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.97), #020617);
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .side::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.2), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.16), transparent 60%);
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    .side-title {
+      font-size: 0.86rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 3px;
+    }
+
+    .side-text {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .role-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+
+    .hint { font-size: 0.78rem; color: #9ca3af; }
+
+    .box {
+      border-radius: 14px;
+      padding: 9px 9px 8px;
+      border: 1px solid rgba(55, 65, 81, 0.95);
+      background: rgba(15, 23, 42, 0.96);
+      font-size: 0.84rem;
+      color: var(--text-soft);
+      line-height: 1.55;
+      max-height: 230px;
+      overflow-y: auto;
+    }
+
+    .box::-webkit-scrollbar { width: 5px; }
+    .box::-webkit-scrollbar-track { background: transparent; }
+    .box::-webkit-scrollbar-thumb {
+      background: rgba(75, 85, 99, 0.9);
+      border-radius: 999px;
+    }
+
+    .box h3 {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: #e5e7eb;
+    }
+
+    .actions-list {
+      list-style: none;
+    }
+
+    .actions-list li {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(107, 114, 128, 0.95);
+      background: rgba(15, 23, 42, 1);
+      color: #d1d5db;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .crumbs {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.78rem;
+      color: #9ca3af;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px dashed rgba(75, 85, 99, 0.9);
+    }
+
+    .crumb-pill {
+      border-radius: 999px;
+      padding: 2px 8px;
+      background: rgba(31, 41, 55, 0.98);
+      border: 1px solid rgba(75, 85, 99, 0.95);
+      white-space: nowrap;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: rgba(22, 163, 74, 0.2);
+      border: 1px solid rgba(74, 222, 128, 0.9);
+      color: #bbf7d0;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 14px rgba(74, 222, 128, 0.9);
+    }
+
+    .status-note {
+      font-size: 0.72rem;
+      color: #9ca3af;
+      text-align: right;
+    }
+
+    .foot-row {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: #6b7280;
+    }
+
+    .foot-row code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.95);
+      background: rgba(15, 23, 42, 0.98);
+      color: #e5e7eb;
+    }
+
+    .fade-swap { animation: fadeIn 240ms ease-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .shell { padding: 10px; margin-top: 8px; }
+      .card { padding: 12px; }
+      h1 { font-size: 2rem; }
+      .subtitle { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="shell">
+  <main class="card" aria-label="Fishing Streamers world-building invitation">
+    <div class="inner">
+      <!-- LEFT: Splash + Layers -->
+      <section aria-label="Intro and layers">
+        <!-- Splash view -->
+        <div id="splash" class="view visible" aria-live="polite">
+          <div class="tagline">
+            <span class="pill"><span class="spark"></span><span>Fishing Streamers</span></span>
+            <span>From playing worlds to building them.</span>
+          </div>
+
+          <h1 class="title-gradient">You&apos;ve streamed every map.<br />Ready to design the next one?</h1>
+
+          <p class="subtitle">
+            This is a gentle exit ramp for streamers who feel the grind, love their community,
+            and secretly want to build something that lasts longer than the next patch cycle.
+            You don&apos;t have to quit overnight. You only have to take the next creative step.
+          </p>
+
+          <p class="whisper">
+            Translation: your skills in chat-wrangling, vibes, and live chaos are world-building skills.
+            You&apos;ve just been renting someone else&apos;s universe.
+          </p>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="enter" type="button">
+              Show me the blueprint
+              <span class="btn-icon">⮞</span>
+            </button>
+            <button class="btn btn-ghost" id="quietPeek" type="button">
+              I&apos;m curious, but cautious.
+            </button>
+          </div>
+          <p class="microcopy">No forms, no logins, no contracts. This page only remembers you in this browser.</p>
+        </div>
+
+        <!-- Main view -->
+        <div id="main" class="view hidden" aria-hidden="true">
+          <p class="section-label">Receptive Layers</p>
+          <p class="subtitle" style="margin-bottom:10px;">
+            Think of this as your new skill tree. Same XP you&apos;ve been grinding on stream:
+            community management, live creativity, technical chaos-wrangling &mdash; just re-specced
+            into world-building.
+          </p>
+
+          <div class="stack" aria-label="Layers for transitioning from gaming to world-building">
+            <article class="layer-card">
+              <div class="layer-title-row">
+                <h2 class="layer-title">1. Identity Reframe &mdash; Streamer → World Architect</h2>
+                <span class="tag-chip">You Already Do This</span>
+              </div>
+              <div class="layer-body">
+                Your Discord isn&apos;t just &quot;the server&quot;. It&apos;s a micro-civilization: norms, lore,
+                in-jokes, mods-as-faction-leaders. The first step is naming that.
+                <ul class="bullets">
+                  <li><span class="dot"></span><span>Call your community what it actually is: a world, not just a chat.</span></li>
+                  <li><span class="dot"></span><span>Map what already exists: roles, factions, recurring bits, rituals.</span></li>
+                  <li><span class="dot"></span><span>Ask: &quot;If this was a game setting, what would it be called?&quot; Then name it.</span></li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="layer-card">
+              <div class="layer-title-row">
+                <h2 class="layer-title">2. Bridge Worlds &mdash; Use Games as On-Ramps</h2>
+                <span class="tag-chip">No Blank Slates</span>
+              </div>
+              <div class="layer-body">
+                Instead of leaping from &quot;streamer&quot; to &quot;novelist&quot;, move inside games that already
+                embed world-building: Minecraft, D&amp;D, Valheim, modded servers.
+                <ul class="bullets">
+                  <li><span class="dot"></span><span>Run &quot;world episodes&quot; in Minecraft or a TTRPG where chat helps define regions, factions, and history.</span></li>
+                  <li><span class="dot"></span><span>Use each stream to answer one world question: &quot;Who lives in the forest beyond spawn?&quot;</span></li>
+                  <li><span class="dot"></span><span>Export the results to a simple &quot;Lore Codex&quot; doc you update after each session.</span></li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="layer-card">
+              <div class="layer-title-row">
+                <h2 class="layer-title">3. Audience Shift &mdash; Viewers → Co-Authors</h2>
+                <span class="tag-chip">Collaborative Lore</span>
+              </div>
+              <div class="layer-body">
+                Your audience already backseats the story. We just give that chaos a job title.
+                <ul class="bullets">
+                  <li><span class="dot"></span><span>Replace some chat polls with lore polls: names, symbols, factions, myths.</span></li>
+                  <li><span class="dot"></span><span>Let mods run &quot;side quests&quot; in Discord channels that become official canon.</span></li>
+                  <li><span class="dot"></span><span>Reward lore-crafting (fanart, fanfic, docs) with shoutouts and dedicated &quot;World Credits&quot; panels.</span></li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="layer-card">
+              <div class="layer-title-row">
+                <h2 class="layer-title">4. Scaffolded Creation &mdash; Tiny, Stream-Sized Tasks</h2>
+                <span class="tag-chip">15-Minute Chunks</span>
+              </div>
+              <div class="layer-body">
+                You&apos;re always on the clock. So the world-building has to fit between alerts and queue pops.
+                <ul class="bullets">
+                  <li><span class="dot"></span><span>Design small &quot;world jobs&quot;: one region, one relic, one holiday, one rumor per session.</span></li>
+                  <li><span class="dot"></span><span>Use timers: &quot;Chat, we have 7 minutes to invent a city rule that makes this place unique.&quot;</span></li>
+                  <li><span class="dot"></span><span>Archive everything in a simple doc or wiki that viewers can browse between streams.</span></li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="layer-card">
+              <div class="layer-title-row">
+                <h2 class="layer-title">5. Revenue Stack &mdash; Make the New World Pay Rent</h2>
+                <span class="tag-chip">Sustainable Shift</span>
+              </div>
+              <div class="layer-body">
+                Leaving pure gaming is risky if your bills depend on the algorithm. The answer isn&apos;t a leap &mdash; it&apos;s a stack.
+                <ul class="bullets">
+                  <li><span class="dot"></span><span>Turn world-building streams into VOD series and edited lore episodes.</span></li>
+                  <li><span class="dot"></span><span>Add a &quot;Worldbuilder&quot; tier on Patreon: early access to maps, drafts, and polls that shape canon.</span></li>
+                  <li><span class="dot"></span><span>Experiment with digital art packs, maps, or PDFs based in your universe as supporter rewards.</span></li>
+                </ul>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Roles + Actions -->
+      <aside class="side" aria-label="Choose your role and first steps">
+        <header>
+          <p class="side-title">Choose your current role</p>
+          <p class="side-text">
+            You don&apos;t have to become a full-time worldbuilder tomorrow. Pick the role that matches your
+            current energy and risk tolerance. You can change this anytime.
+          </p>
+        </header>
+
+        <section aria-label="Role selector">
+          <div class="role-row" id="roleButtons">
+            <button class="btn btn-pill" data-role="quiet-anchor" type="button">🕯️ Quiet Anchor</button>
+            <button class="btn btn-pill" data-role="signal-booster" type="button">📡 Lore Signal Booster</button>
+            <button class="btn btn-pill" data-role="systems-builder" type="button">🛠️ Systems Builder</button>
+            <button class="btn btn-pill" data-role="healer-keeper" type="button">🌿 Community Keeper</button>
+          </div>
+          <p class="hint">&quot;Quiet Anchor&quot; is for lurkers, burnt-out veterans, and people testing the water.</p>
+        </section>
+
+        <section aria-label="Action suggestions">
+          <div class="box" id="actionsBox"></div>
+        </section>
+
+        <section aria-label="Breadcrumbs and status">
+          <div>
+            <span class="crumbs" id="crumbBox">
+              <span>Breadcrumbs:</span>
+            </span>
+          </div>
+          <div class="status-row">
+            <span class="status-pill">
+              <span class="status-dot"></span>
+              Safe-to-explore mode: on
+            </span>
+            <span class="status-note">
+              This doesn&apos;t ask you to burn bridges.<br />It just opens another door.
+            </span>
+          </div>
+        </section>
+
+        <footer class="foot-row">
+          <span>Local-only memory. Close tab, keep your soul.</span>
+          <span><code>ROLE:&nbsp;<span id="roleCode">unset</span></code></span>
+        </footer>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    const STORAGE_ROLE = "fishingStreamersRole_v1";
+    const STORAGE_CRUMBS = "fishingStreamersCrumbs_v1";
+
+    const splash = document.getElementById("splash");
+    const main = document.getElementById("main");
+    const enterBtn = document.getElementById("enter");
+    const quietBtn = document.getElementById("quietPeek");
+    const roleButtons = document.getElementById("roleButtons");
+    const actionsBox = document.getElementById("actionsBox");
+    const crumbBox = document.getElementById("crumbBox");
+    const roleCodeEl = document.getElementById("roleCode");
+
+    function showMain() {
+      if (!splash || !main) return;
+      splash.classList.remove("visible");
+      splash.classList.add("hidden");
+      main.classList.remove("hidden");
+      main.classList.add("visible");
+      main.setAttribute("aria-hidden", "false");
+    }
+
+    const PRESETS = {
+      "quiet-anchor": {
+        title: "Gentle steps for a Quiet Anchor 🕯️",
+        code: "Q-ANCHOR",
+        items: [
+          {
+            tag: "Noticing",
+            text: "On your next stream, just name it: 'If this was a world, what would we call it?' Collect answers, no pressure to act yet."
+          },
+          {
+            tag: "One Lore Line",
+            text: "Once a week, add a single lore sentence about your community to a private doc. That&apos;s it. One line."
+          },
+          {
+            tag: "Energy Check",
+            text: "Before adding more projects, write your non-negotiables (sleep, health, relationships). World-building should protect them, not consume them."
+          },
+          {
+            tag: "Safe Corners",
+            text: "Find or create one quiet channel where people can talk about future worlds, not just current games. Lurk and listen there first."
+          }
+        ]
+      },
+      "signal-booster": {
+        title: "Next moves for a Lore Signal Booster 📡",
+        code: "SIG-BOOST",
+        items: [
+          {
+            tag: "Curate",
+            text: "Pick three creators who are already building worlds. Share their work with honest commentary, not generic hype."
+          },
+          {
+            tag: "Threading",
+            text: "Do one post or short where you explain your universe in 60 seconds. Link back to your streams or docs."
+          },
+          {
+            tag: "No Hype Traps",
+            text: "Resist clickbait & rage bait. Prototype messages that invite people into story, not panic."
+          },
+          {
+            tag: "Lore Hub",
+            text: "Set up a simple 'World Info' channel/card where every new follower can see what you&apos;re building and how to join in."
+          }
+        ]
+      },
+      "systems-builder": {
+        title: "Blueprints for a Systems Builder 🛠️",
+        code: "SYS-BUILD",
+        items: [
+          {
+            tag: "One-Pager",
+            text: "Draft a one-page doc: what kind of world you&apos;re building, who it&apos;s for, and how streams plug into it."
+          },
+          {
+            tag: "Bridge Night",
+            text: "Schedule one 'bridge stream' per week: half gameplay, half collaborative world-building with chat in a familiar game."
+          },
+          {
+            tag: "Simple Rules",
+            text: "Define 3 world rules: what this universe always protects, never allows, and uniquely cares about. Everything else can grow from there."
+          },
+          {
+            tag: "Fork Friendly",
+            text: "Organize your lore in a way others can copy, remix, and localize (wikis, shared docs, simple CC-friendly terms)."
+          }
+        ]
+      },
+      "healer-keeper": {
+        title: "Boundaries for a Community Keeper 🌿",
+        code: "HEAL-KEEP",
+        items: [
+          {
+            tag: "Recharge",
+            text: "Block off non-negotiable off-screen time. Protect your nervous system like it&apos;s a legendary item."
+          },
+          {
+            tag: "Shared Care",
+            text: "Invite trusted regulars/mods to hold some of the emotional load: peer-support channels, check-in threads, chill voice calls."
+          },
+          {
+            tag: "Consent",
+            text: "When someone trauma-dumps, ask what they actually want: witness, advice, resources, or just silence and presence."
+          },
+          {
+            tag: "World Mood",
+            text: "Write a short 'emotional tone' for your world: how people treat each other there when things go wrong. That tone is your true content."
+          }
+        ]
+      }
+    };
+
+    function readJson(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function writeJson(key, value) {
+      try { window.localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+    }
+
+    function renderActions(role) {
+      const preset = PRESETS[role] || PRESETS["quiet-anchor"];
+      if (!actionsBox) return;
+
+      const wrap = document.createElement("div");
+      wrap.className = "fade-swap";
+
+      const h = document.createElement("h3");
+      h.textContent = preset.title;
+      wrap.appendChild(h);
+
+      const ul = document.createElement("ul");
+      ul.className = "actions-list";
+
+      preset.items.forEach(it => {
+        const li = document.createElement("li");
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = it.tag;
+        const p = document.createElement("p");
+        p.innerHTML = it.text;
+        li.appendChild(badge);
+        li.appendChild(p);
+        ul.appendChild(li);
+      });
+
+      wrap.appendChild(ul);
+      actionsBox.innerHTML = "";
+      actionsBox.appendChild(wrap);
+
+      if (roleCodeEl) roleCodeEl.textContent = preset.code;
+    }
+
+    function setActiveRole(role) {
+      if (!roleButtons) return;
+      Array.from(roleButtons.querySelectorAll(".btn-pill")).forEach(btn => {
+        const isActive = btn.getAttribute("data-role") === role;
+        btn.setAttribute("data-active", isActive ? "true" : "false");
+      });
+    }
+
+    function updateCrumbs(role) {
+      if (!crumbBox) return;
+      const prev = readJson(STORAGE_CRUMBS, []);
+      const now = new Date().toISOString();
+      const next = [...prev, { role, at: now }].slice(-6);
+      writeJson(STORAGE_CRUMBS, next);
+
+      // Remove old pills
+      Array.from(crumbBox.querySelectorAll(".crumb-pill")).forEach(el => el.remove());
+
+      next.forEach(c => {
+        const pill = document.createElement("span");
+        pill.className = "crumb-pill";
+        const label = (c.role || "unset").replace("-", " ");
+        const d = new Date(c.at);
+        const short = isNaN(d.getTime()) ? "" : `${d.getMonth() + 1}/${d.getDate()}`;
+        pill.textContent = short ? `${label} • ${short}` : label;
+        crumbBox.appendChild(pill);
+      });
+    }
+
+    function setRole(role) {
+      writeJson(STORAGE_ROLE, role);
+      setActiveRole(role);
+      renderActions(role);
+      updateCrumbs(role);
+    }
+
+    if (enterBtn) {
+      enterBtn.addEventListener("click", () => {
+        showMain();
+      });
+    }
+
+    if (quietBtn) {
+      quietBtn.addEventListener("click", () => {
+        showMain();
+        setRole("quiet-anchor");
+      });
+    }
+
+    if (roleButtons) {
+      roleButtons.addEventListener("click", (ev) => {
+        const btn = ev.target.closest("[data-role]");
+        if (!btn) return;
+        const role = btn.getAttribute("data-role");
+        if (!role) return;
+        setRole(role);
+      });
+    }
+
+    (function hydrate() {
+      const storedRole = readJson(STORAGE_ROLE, null);
+      if (storedRole && PRESETS[storedRole]) {
+        showMain();
+        setRole(storedRole);
+      } else {
+        renderActions("quiet-anchor");
+        setActiveRole("quiet-anchor");
+        updateCrumbs("quiet-anchor");
+      }
+    })();
+  })();
+</script>
+</body>
+</html>
